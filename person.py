@@ -19,7 +19,10 @@ class Person():
     def rem_tag(self,tag_name):
         None
 
+    def getKey(self,tag):
+        return tag.priority
+
     #sorts the tags after their priorities
     def sort_tags(self):
-        None
+        sorted(self.tags,key=self.getKey)
 

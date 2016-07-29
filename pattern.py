@@ -5,4 +5,5 @@
 class pattern():
     capital=False
     numbers=False
-    length=8
+    min_length=8
+    max_length=8
