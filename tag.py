@@ -1,3 +1,8 @@
+#Author Marcin Cherek
+#Language: Python 3.4
+#Version 1.0
+#License: MIT
+
 #This class is for a single information
 #About a person.
 #It also handles the priority of the information.

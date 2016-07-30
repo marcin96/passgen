@@ -7,15 +7,19 @@ import sys
 import os
 #Project Imports
 import evaluator
-import listgenerator
+import listgen
 import passgenerator
+
+def help_me():
+    print("help")
+    
 
 #Main Method
 #Analyses the parameters
 def main(argv):
     #generate List
     if(argv[0]=="-gl"):
-        None
+        listgen.generate_list(argv[1:])
     #generate Password
     elif(argv[0]=="-gp"):
         None

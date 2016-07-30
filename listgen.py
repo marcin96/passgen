@@ -1,3 +1,8 @@
+#Author Marcin Cherek
+#Language: Python 3.4
+#Version 1.0
+#License: MIT
+
 #Main method of listgen
 #The Argument can be a xml file or
 #Just nothing and in this case
