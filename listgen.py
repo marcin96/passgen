@@ -5,44 +5,67 @@
 #manually into the console
 import pattern
 import person
+import random
+import evaluator
+import string
 
-#checks if password has Capital Letters
-def hasCapitalLetters(passW):
-    for i in passW:
-        if(i.isupper()):
-            return True
-    return False
-    
-#Checks if password has Numbers
-def hasNumber(passW):
-    for i in ["0","1","2","3","4","5","6","7","8","9"]:
-        if(i in passW):
-            return True
-    return False
 
 #Checks if the password has the right pattern
 def confirmedPattern(passW,pat):
     if(len(passW)<pat.min_length and len(passW)>pat.max_length):#Check length
         return False
     if(pat.numbers):
-        if(hasNumber(passW)!=True):
+        if(evaluator.hasNumber(passW)!=True):
             return False
     if(pat.capital):
-        if(hasCapitalLetters(passW)!=True):
+        if(evaluator.hasCapitalLetters(passW)!=True):
            return False
     return True
+
+#Generates Sequences of One Tag
+def generateSequenceOfTag(tag,otherTag,length):
+    seq = []
+    seq.append(tag.upper())
+    seq.append(tag.lower())
+    if(len(tag)<length):
+        diff=length-len(tag)
+        if(diff<3):
+            rang = int(str(1)+diff*"0")
+            for i in range(rang):
+                seq.append(tag + str(i))
+                seq.append(tag.upper()+str(i))
+                seq.append(tag.lower()+str(i))
+                seq.append(string.capwords(tag)+str(i))
+        if((length-(len(tag)+len(otherTag))<3)):
+             for i in range(diff):
+                seq.append(tag + otherTag + str(i))
+                seq.append(tag.upper()+ otherTag.upper() +str(i))
+                seq.append(tag.lower()+ otherTag.lower() +str(i))
+                seq.append(string.capwords(tag)+ otherTag +str(i))
+    seq.append(tag+otherTag)
+    seq.append(string.capwords(tag))
+    seq.append(string.capwords(tag)+otherTag)
+    seq.append(tag+string.capwords(otherTag))
+    seq.append(string.capwords(tag)+string.capwords(otherTag))
+    return seq
         
-                
+    
 #Generates the passwords with the
 #pattern information
 def gen(person,pat):
-    file = open(person.name+".txt","w+")
+    file = open(person.name+".txt","a")
     person.sort_tags() #The tags are now sorted by their priority
+    count=0
     for i in person.tags:
         for w in person.tags:
-            if(confirmedPattern(i.name+w.name,pat)):
-                file.write(i.name+w.name+"\n")
-    print("finished")
+            #The real generation sequence
+            passWS = generateSequenceOfTag(i.name,w.name,pat.max_length)
+            for passW in passWS:
+                if(confirmedPattern(passW,pat)):
+                    file.write(passW+"\n")
+                    count+=1
+    print("finished with "+str(count)+" results")
+    print("Saved to " + person.name+".txt")
 
 #generates passwords from xml file
 #Also possible with multiple persons
@@ -58,12 +81,12 @@ def generate_manually():
     pat.min_length=int(input("minimal length:"))
     pat.max_length=int(input("maximal length:"))
     pat.numbers=bool(input("numbers(True,False):"))
-    print("Add Tags > name,priority")
+    print("Add Tags > name,priority (1-10)")
     print("Birthday,Name,Age,Name of Pet ect...")
     while(True):
         i=input("TAG>")
         if(i!=""):
-            pers.add_tag(str(i.split(',')[0]),int(i.split(",")[1]))
+            pers.add_tag(str(i.split(',')[0]).strip(),int(i.split(",")[1]))
         else:break
     gen(pers,pat)
     
