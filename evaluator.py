@@ -5,6 +5,7 @@
 
 #Designed to check the strength of a password
 import re
+import tag
 
 #checks if password has Capital Letters
 def hasCapitalLetters(passW):
@@ -22,19 +23,19 @@ def hasNumber(passW):
 
 #Checks if the password has special characters
 def hasSpecialSymbols(passW):
-    if(re.match(r'^_-:,;<>+"*ç%&/()=?"')):
+    if(re.match(r'^_-:,;<>+"*ç%&/()=?"',passW)):
         return True
     return False
 
 #Checks if the password has no connectio
 #To the informations about the person
 #Returns the strength of the Connection 0-10
-def hasConection(passW,tags):
+def hasConnection(passW,tags):
     connection=0
     for i in tags:
         if(i.name.lower() in passW.lower()):
             connection += i.priority/2
-    return Connection
+    return connection
 
 #Checks if the passWord has repeating patterns
 def checkForRepeatingPatterns(passW):
@@ -55,4 +56,12 @@ def evaluate(passW,tags):
 
 #
 if __name__== "__main__":
-    None
+    passW = input("password:")
+    tags = []
+    while(True):
+        i = input("Tag>")
+        if(i!=""):
+            tags.append(tag.Tag(str(i.split(',')[0]).strip(),int(i.split(",")[1])))
+        else:
+            break
+    print("strength:",evaluate(passW,tags))

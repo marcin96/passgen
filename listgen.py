@@ -14,6 +14,7 @@ import random
 import evaluator
 import string
 import ast
+from collections import OrderedDict
 
 
 #Checks if the password has the right pattern
@@ -28,6 +29,10 @@ def confirmedPattern(passW,pat):
            return False
     return True
 
+#Removes doubles from a list
+def eliminateDoubles(seq):
+    return list(OrderedDict.fromkeys(seq))
+    
 #Generates Sequences of one Tag
 def generateSequenceOfTag(tag,otherTag,length):
     seq = []
@@ -43,7 +48,7 @@ def generateSequenceOfTag(tag,otherTag,length):
                 seq.append(tag.lower()+str(i))
                 seq.append(string.capwords(tag)+str(i))
         if((length-(len(tag)+len(otherTag))<3)):
-             for i in range(diff):
+             for i in range(length-len(tag)+len(otherTag)):
                 seq.append(tag + otherTag + str(i))
                 seq.append(tag.upper()+ otherTag.upper() +str(i))
                 seq.append(tag.lower()+ otherTag.lower() +str(i))
@@ -53,7 +58,7 @@ def generateSequenceOfTag(tag,otherTag,length):
     seq.append(string.capwords(tag)+otherTag)
     seq.append(tag+string.capwords(otherTag))
     seq.append(string.capwords(tag)+string.capwords(otherTag))
-    return seq
+    return eliminateDoubles(seq)
         
     
 #Generates the passwords with the
@@ -97,7 +102,8 @@ def generate_manually():
             pers.add_tag(str(i.split(',')[0]).strip(),int(i.split(",")[1]))
         else:break
     gen(pers,pat)
-    
+
+#The main method in thi
 def generate_list(argv):
     if(argv==None):
         generate_manually()
