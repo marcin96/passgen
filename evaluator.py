@@ -52,3 +52,7 @@ def evaluate(passW,tags):
     points-=hasConnection(passW,tags)
     points-=checkForRepeatingPatterns(passW)/2
     return points
+
+#
+if __name__== "__main__":
+    None

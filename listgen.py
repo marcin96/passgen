@@ -13,6 +13,7 @@ import person
 import random
 import evaluator
 import string
+import ast
 
 
 #Checks if the password has the right pattern
@@ -27,7 +28,7 @@ def confirmedPattern(passW,pat):
            return False
     return True
 
-#Generates Sequences of One Tag
+#Generates Sequences of one Tag
 def generateSequenceOfTag(tag,otherTag,length):
     seq = []
     seq.append(tag.upper())
@@ -58,7 +59,7 @@ def generateSequenceOfTag(tag,otherTag,length):
 #Generates the passwords with the
 #pattern information
 def gen(person,pat):
-    file = open(person.name+".txt","a")
+    file = open(person.name+".txt","w+")
     person.sort_tags() #The tags are now sorted by their priority
     count=0
     for i in person.tags:
@@ -69,6 +70,8 @@ def gen(person,pat):
                 if(confirmedPattern(passW,pat)):
                     file.write(passW+"\n")
                     count+=1
+                else:
+                    print(passW)
     print("finished with "+str(count)+" results")
     print("Saved to " + person.name+".txt")
 
@@ -82,10 +85,10 @@ def generate_from_file(filename):
 def generate_manually():
     pers = person.Person(input("person's alias:"))
     pat = pattern.pattern()
-    pat.capital=bool(input("Capital Letters(True,False):"))
+    pat.capital=ast.literal_eval(input("Capital Letters(True,False):"))
     pat.min_length=int(input("minimal length:"))
     pat.max_length=int(input("maximal length:"))
-    pat.numbers=bool(input("numbers(True,False):"))
+    pat.numbers=ast.literal_eval(input("numbers(True,False):"))
     print("Add Tags > name,priority (1-10)")
     print("Birthday,Name,Age,Name of Pet ect...")
     while(True):
@@ -99,5 +102,6 @@ def generate_list(argv):
     if(argv==None):
         generate_manually()
 
-
-generate_list(None)
+#
+if __name__== "__main__":
+    generate_list(None)
