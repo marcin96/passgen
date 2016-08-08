@@ -11,7 +11,7 @@ import listgen
 import passgenerator
 
 def help_me():
-    print("help")
+    print("for help go to>> https://github.com/marcin96/passgen/blob/master/Tutorial.pdf")
     
 
 #Main Method
@@ -28,7 +28,7 @@ def main(argv):
         None
     #Help
     elif(argv[0]=="-help"):
-        None
+        help_me()
     else:
         print("WRONG ARGUMENT")
 

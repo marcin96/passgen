@@ -15,6 +15,7 @@ import evaluator
 import string
 import ast
 from collections import OrderedDict
+import datetime
 
 
 #Checks if the password has the right pattern
@@ -32,32 +33,51 @@ def confirmedPattern(passW,pat):
 #Removes doubles from a list
 def eliminateDoubles(seq):
     return list(OrderedDict.fromkeys(seq))
+
+#Sequences Posibilities of One Word
+def sequencePossibilities(tag):
+    ret = []
+    ret.append(tag)
+    ret.append(tag.upper())
+    ret.append(tag.lower())
+    ret.append(string.capwords(tag))
+    return eliminateDoubles(ret)
+
+#Sequences Posibilities of two Tags
+def sequencePossibilities_Of_Two(tag,other):
+    ret = []
+    ret.append(tag+other)
+    ret.append(string.capwords(tag)+other)
+    ret.append(tag+string.capwords(other))
+    ret.append(string.capwords(tag)+string.capwords(other))
+    ret.append(tag.lower()+other)
+    ret.append(tag+other.lower())
+    ret.append(tag.lower()+other.lower())
+    ret.append(tag.upper()+other.upper())
+    ret.append(tag.upper()+other)
+    ret.append(tag+other.upper())
+    return eliminateDoubles(ret)
+    
     
 #Generates Sequences of one Tag
 def generateSequenceOfTag(tag,otherTag,length):
     seq = []
-    seq.append(tag.upper())
-    seq.append(tag.lower())
     if(len(tag)<length):
+        for iT in sequencePossibilities(tag):
+            seq.append(iT)
         diff=length-len(tag)
         if(diff<3):
             rang = int(str(1)+diff*"0")
             for i in range(rang):
-                seq.append(tag + str(i))
-                seq.append(tag.upper()+str(i))
-                seq.append(tag.lower()+str(i))
-                seq.append(string.capwords(tag)+str(i))
+                for iT in sequencePossibilities(tag):
+                    seq.append(iT+str(i))
+        if(len(tag)+len(otherTag)<length):
+            for iT in sequencePossibilities_Of_Two(tag,otherTag):
+                seq.append(iT)
         if((length-(len(tag)+len(otherTag))<3)):
              for i in range(length-len(tag)+len(otherTag)):
-                seq.append(tag + otherTag + str(i))
-                seq.append(tag.upper()+ otherTag.upper() +str(i))
-                seq.append(tag.lower()+ otherTag.lower() +str(i))
-                seq.append(string.capwords(tag)+ otherTag +str(i))
-    seq.append(tag+otherTag)
-    seq.append(string.capwords(tag))
-    seq.append(string.capwords(tag)+otherTag)
-    seq.append(tag+string.capwords(otherTag))
-    seq.append(string.capwords(tag)+string.capwords(otherTag))
+                 for iT in sequencePossibilities_Of_Two(tag,otherTag):
+                     seq.append(iT+str(i))
     return eliminateDoubles(seq)
         
     
@@ -75,10 +95,10 @@ def gen(person,pat):
                 if(confirmedPattern(passW,pat)):
                     file.write(passW+"\n")
                     count+=1
-                else:
-                    print(passW)
     print("finished with "+str(count)+" results")
-    print("Saved to " + person.name+".txt")
+    print("Saved to " + person.name+".txt"," [ ",
+          datetime.datetime.now().date()," ] "," [ ",
+          datetime.datetime.now().time()," ]")
 
 #generates passwords from xml file
 #Also possible with multiple persons
@@ -99,7 +119,9 @@ def generate_manually():
     while(True):
         i=input("TAG>")
         if(i!=""):
-            pers.add_tag(str(i.split(',')[0]).strip(),int(i.split(",")[1]))
+            if(pers.isTag(str(i.split(',')[0]).strip())!=True):
+                pers.add_tag(str(i.split(',')[0]).strip(),int(i.split(",")[1]))
+            else:print("#is already in the tags")
         else:break
     gen(pers,pat)
 

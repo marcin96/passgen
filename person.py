@@ -19,6 +19,9 @@ class Person():
     def rem_tag(self,tag_name):
         None
 
+    def isTag(self,tag_name):
+        return tag_name in self.tags
+
     def getKey(self,tag):
         return tag.priority
 

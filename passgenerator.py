@@ -7,5 +7,9 @@
 #about a person
 #for best security
 
+#Generation method
+def genPass(Person,pattern):
+    None
+
 if __name__== "__main__":
     None
