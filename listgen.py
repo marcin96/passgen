@@ -16,7 +16,7 @@ import string
 import ast
 from collections import OrderedDict
 import datetime
-
+import importer
 
 #Checks if the password has the right pattern
 def confirmedPattern(passW,pat):
@@ -103,7 +103,19 @@ def gen(person,pat):
 #generates passwords from xml file
 #Also possible with multiple persons
 def generate_from_file(filename):
-    None
+    if(filename.split(".")[1] in ["xml","XML"]):
+        person_list = importer.import_persons(filename)
+        pat = pattern.pattern()
+        if(isinstance(persons_list[0],pattern.pattern())):
+           pat = persons_list[0]
+        for pers in persons_list:
+           gen(pers,pat)
+           print("Generating for>",pers.name)
+    else:
+        print("Wrong file extension")
+        print("Please only ->xml")
+           
+           
 
 #In the case of generating wordlist
 #without a xml file
@@ -127,9 +139,11 @@ def generate_manually():
 
 #The main method in thi
 def generate_list(argv):
-    if(argv==None):
+    if(argv==None or "." not in argv[0]):
         generate_manually()
+    else:
+        generate_from_file(argv[0])
 
 #
 if __name__== "__main__":
-    generate_list(None)
+    generate_list(input())

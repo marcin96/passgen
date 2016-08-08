@@ -15,6 +15,9 @@ class Person():
     def add_tag(self,name,priority):
         self.tags.append(tag.Tag(name,priority))
 
+    def add_tag(self,tag):
+        self.tags.append(tag)
+
     #removes a tag
     def rem_tag(self,tag_name):
         None

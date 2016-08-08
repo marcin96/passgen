@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<persons>
+	<person name="marcin">
+		<tag name="marcin" priority="10" />
+	</person>
+	<person name="nick">
+	</person>
+	<person name="rafael">
+	</person>
+</persons>
