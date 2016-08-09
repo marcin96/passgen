@@ -18,17 +18,6 @@ from collections import OrderedDict
 import datetime
 import importer
 
-#Checks if the password has the right pattern
-def confirmedPattern(passW,pat):
-    if(len(passW)<pat.min_length and len(passW)>pat.max_length):#Check length
-        return False
-    if(pat.numbers):
-        if(evaluator.hasNumber(passW)!=True):
-            return False
-    if(pat.capital):
-        if(evaluator.hasCapitalLetters(passW)!=True):
-           return False
-    return True
 
 #Removes doubles from a list
 def eliminateDoubles(seq):
@@ -92,7 +81,7 @@ def gen(person,pat):
             #The real generation sequence
             passWS = generateSequenceOfTag(i.name,w.name,pat.max_length)
             for passW in passWS:
-                if(confirmedPattern(passW,pat)):
+                if(evaluator.confirmedPattern(passW,pat)):
                     file.write(passW+"\n")
                     count+=1
     print("finished with "+str(count)+" results")
@@ -132,14 +121,14 @@ def generate_manually():
         i=input("TAG>")
         if(i!=""):
             if(pers.isTag(str(i.split(',')[0]).strip())!=True):
-                pers.add_tag(str(i.split(',')[0]).strip(),int(i.split(",")[1]))
+                pers.add_tagD(str(i.split(',')[0]).strip(),int(i.split(",")[1]))
             else:print("#is already in the tags")
         else:break
     gen(pers,pat)
 
 #The main method in thi
 def generate_list(argv):
-    if(argv==None or "." not in argv[0]):
+    if(argv==None or len(argv)==0):
         generate_manually()
     else:
         generate_from_file(argv[0])

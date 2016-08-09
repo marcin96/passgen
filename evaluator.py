@@ -41,6 +41,19 @@ def hasConnection(passW,tags):
 def checkForRepeatingPatterns(passW):
     r = re.compile(r"(.+?)(?=\1)")
     return len(r.findall(passW))
+
+
+#Checks if the password has the right pattern
+def confirmedPattern(passW,pat):
+    if(len(passW)<pat.min_length and len(passW)>pat.max_length):#Check length
+        return False
+    if(pat.numbers):
+        if(hasNumber(passW)!=True):
+            return False
+    if(pat.capital):
+        if(hasCapitalLetters(passW)!=True):
+           return False
+    return True
     
 #returns a integer from 0 to 10
 #Specifies the strength of a password
