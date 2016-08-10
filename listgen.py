@@ -19,6 +19,23 @@ import datetime
 import importer
 
 
+#This method checks if there is
+#enough spave aviable for the
+#generation
+def isEnaughSpaceAviable():
+    None
+
+#This method gives you the count of possbile
+#combinations
+def howMuchPossibilities():
+    None
+    
+#This method says how long
+#a generation would take with
+#the parameters
+def workingTime(tags,pattern):
+    None
+
 #Removes doubles from a list
 def eliminateDoubles(seq):
     return list(OrderedDict.fromkeys(seq))
@@ -68,8 +85,8 @@ def generateSequenceOfTag(tag,otherTag,length):
                  for iT in sequencePossibilities_Of_Two(tag,otherTag):
                      seq.append(iT+str(i))
     return eliminateDoubles(seq)
-        
-    
+
+
 #Generates the passwords with the
 #pattern information
 def gen(person,pat):
@@ -78,6 +95,7 @@ def gen(person,pat):
     count=0
     for i in person.tags:
         for w in person.tags:
+            if(i==w):continue
             #The real generation sequence
             passWS = generateSequenceOfTag(i.name,w.name,pat.max_length)
             for passW in passWS:
