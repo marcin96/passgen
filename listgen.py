@@ -3,11 +3,8 @@
 #Version 1.0
 #License: MIT
 
-#Main method of listgen
-#The Argument can be a xml file or
-#Just nothing and in this case
-#the generation information must be given
-#manually into the console
+import os
+import time
 import pattern
 import person
 import random
@@ -23,6 +20,11 @@ import importer
 #enough spave aviable for the
 #generation
 def isEnaughSpaceAviable():
+    None
+
+#calculates how much space is
+#needed
+def howMuchSpaceNeeded():
     None
 
 #This method gives you the count of possbile
@@ -87,9 +89,18 @@ def generateSequenceOfTag(tag,otherTag,length):
     return eliminateDoubles(seq)
 
 
-#Generates the passwords with the
-#pattern information
+#if the needed time is below 1/10
+#of a second
+def getCountTime(time):
+    if(time<1):return (1/10)/60
+
+#Main method of listgen
+#The Argument can be a xml file or
+#Just nothing and in this case
+#the generation information must be given
+#manually into the console
 def gen(person,pat):
+    start_time = time.time()
     file = open(person.name+".txt","w+")
     person.sort_tags() #The tags are now sorted by their priority
     count=0
@@ -106,6 +117,9 @@ def gen(person,pat):
     print("Saved to " + person.name+".txt"," [ ",
           datetime.datetime.now().date()," ] "," [ ",
           datetime.datetime.now().time()," ]")
+    file.close()
+    print("File size: [",os.stat((person.name+".txt")).st_size  ,"]")
+    print("Time : ", getCountTime((start_time-time.time()))," min")
 
 #generates passwords from xml file
 #Also possible with multiple persons

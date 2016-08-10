@@ -45,7 +45,7 @@ def checkForRepeatingPatterns(passW):
 
 #Checks if the password has the right pattern
 def confirmedPattern(passW,pat):
-    if(len(passW)<pat.min_length and len(passW)>pat.max_length):#Check length
+    if(len(passW)<pat.min_length or len(passW)>pat.max_length):#Check length
         return False
     if(pat.numbers):
         if(hasNumber(passW)!=True):
