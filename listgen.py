@@ -3,7 +3,6 @@
 #Version 1.0
 #License: MIT
 
-
 """
 Generates Wordlists with specified pattern and person.
 """
@@ -11,7 +10,6 @@ Generates Wordlists with specified pattern and person.
 import os
 import time
 import pattern
-import person
 import random
 import evaluator
 import string
@@ -19,6 +17,8 @@ import ast
 from collections import OrderedDict
 import datetime
 import importer
+import tag
+import person
 
 def isEnaughSpaceAviable(spaceA,spaceN):
     """
@@ -93,18 +93,17 @@ def generateSequenceOfTag(tag,length):
             for i in range(rang):
                 for iT in sequencePossibilities(tag):
                     seq.append(iT+str(i))
+                    seq.append(str(i)+iT)
     return eliminateDoubles(seq)
 
-def generateSequenceOfTags(tag,otherTag,length):
-    """#Generates sequences of two tags"""
-    seq=[]
-    if(len(tag)+len(otherTag)<length):
-        for iT in sequencePossibilities_Of_Two(tag,otherTag):
-            seq.append(iT)
-        if((length-(len(tag)+len(otherTag))<3)):
-             for i in range(length-len(tag)+len(otherTag)):
-                 for iT in sequencePossibilities_Of_Two(tag,otherTag):
-                     seq.append(iT+str(i))
+def generateSequenceOfTags(tags,length):
+    """Generates sequences of more tags"""
+    seq = []
+    for i in tags:
+            com = [tag.Tag(x.name+i.name,i.priority) for x in tags if (len(i.name)+len(x.name))<=length]
+            for t in com:
+                print(t.name)
+                seq.append(t)
     return eliminateDoubles(seq)
 
 
@@ -115,7 +114,25 @@ def getCountTime(time):
     """
     if(time<1):return (1/10)/60
 
-def gen(person,pat):
+def get_tags(tags,length):
+   """
+   Like a puzzle algorithm it combines tags together to one tag
+   """
+   seq = []
+   ret = []
+   hasMorePossibilities=True
+   for i in tags:ret.append(i)
+   while(hasMorePossibilities):
+      ret = generateSequenceOfTags(ret,length)
+      if(ret!=[]):
+          for i in ret:
+              seq.append(i)
+      else:
+          hasMorePossibilities=False
+          break
+   return seq
+
+def gen(pers,pat):
     """
     Main method of listgen
     The Argument can be a xml file or
@@ -124,10 +141,12 @@ def gen(person,pat):
     manually into the console
     """
     start_time = time.time()
-    file = open(person.name+".txt","w+")
-    person.sort_tags() #The tags are now sorted by their priority
+    file = open(pers.name+".txt","w+")
+    pers.sort_tags() #The tags are now sorted by their priority
     count=0
-    for i in person.tags:
+    seq = get_tags(pers.tags,pat.max_length)
+    for i in pers.tags:seq.append(i)
+    for i in seq:
         if(evaluator.confirmedPattern(i.name,pat)!=True):continue
         #The real generation sequence
         passWS = generateSequenceOfTag(i.name,pat.max_length)
@@ -136,11 +155,11 @@ def gen(person,pat):
                 file.write(passW+"\n")
                 count+=1
     print("finished with "+str(count)+" results")
-    print("Saved to " + person.name+".txt"," [ ",
+    print("Saved to " + pers.name+".txt"," [ ",
           datetime.datetime.now().date()," ] "," [ ",
           datetime.datetime.now().time()," ]")
     file.close()
-    print("File size: [",os.stat((person.name+".txt")).st_size  ,"]")
+    print("File size: [",os.stat((pers.name+".txt")).st_size  ,"]")
     print("Time : ", getCountTime((start_time-time.time()))," min")
 
 def generate_from_file(filename):
@@ -193,6 +212,6 @@ def generate_list(argv):
     else:
         generate_from_file(argv[0])
 
-#
+
 if __name__== "__main__":
     generate_list(input())
