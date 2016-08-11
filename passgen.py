@@ -5,13 +5,14 @@
 
 import sys
 import os
+
 #Project Imports
 import evaluator
 import listgen
 import passgenerator
 
 def help_me():
-    print("for help go to>> https://github.com/marcin96/passgen/blob/master/Tutorial.pdf")
+    print("for more help go to>> https://github.com/marcin96/passgen/blob/master/Tutorial.pdf")
     
 
 #Main Method

@@ -3,11 +3,13 @@
 #Version 1.0
 #License: MIT
 
-#This class is for a single information
-#About a person.
-#It also handles the priority of the information.
-#This is important for the generation of lists
 class Tag():
+    """
+    This class is for a single information
+    About a person.
+    It also handles the priority of the information.
+    This is important for the generation of lists
+    """
     name=""
     priority=0
     def __init__(self,name,priority):
@@ -16,8 +18,11 @@ class Tag():
             self.priority=priority
         else:
            None
-    #Evaluates the given Arguments
+           
     def __eval_arguments(self,name,priority):
+        """
+        Evaluates the given Arguments
+        """
         if(isinstance(name,str)!=True):
             return False
         if(name==None or name==""):

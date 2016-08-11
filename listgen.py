@@ -3,6 +3,11 @@
 #Version 1.0
 #License: MIT
 
+
+"""
+Generates Wordlists with specified pattern and person.
+"""
+
 import os
 import time
 import pattern
@@ -15,35 +20,44 @@ from collections import OrderedDict
 import datetime
 import importer
 
-
-#This method checks if there is
-#enough spave aviable for the
-#generation
-def isEnaughSpaceAviable():
+def isEnaughSpaceAviable(spaceA,spaceN):
+    """
+    This method checks if there is
+    enough spave aviable for the
+    generation
+    """
     None
 
-#calculates how much space is
-#needed
 def howMuchSpaceNeeded():
+    """
+    calculates how much space is
+    needed
+    """
     None
 
-#This method gives you the count of possbile
-#combinations
 def howMuchPossibilities():
+    """
+    This method gives you the count of possbile
+    combinations
+    """
     None
     
-#This method says how long
-#a generation would take with
-#the parameters
 def workingTime(tags,pattern):
+    """
+    This method says how long
+    a generation would take with
+    the parameters
+    """
     None
 
-#Removes doubles from a list
 def eliminateDoubles(seq):
+    """
+    Removes doubles from a list
+    """
     return list(OrderedDict.fromkeys(seq))
 
-#Sequences Posibilities of One Word
 def sequencePossibilities(tag):
+    """Sequences Posibilities of One Word"""
     ret = []
     ret.append(tag)
     ret.append(tag.upper())
@@ -51,8 +65,8 @@ def sequencePossibilities(tag):
     ret.append(string.capwords(tag))
     return eliminateDoubles(ret)
 
-#Sequences Posibilities of two Tags
 def sequencePossibilities_Of_Two(tag,other):
+    """Sequences Posibilities of two Tags"""
     ret = []
     ret.append(tag+other)
     ret.append(string.capwords(tag)+other)
@@ -67,8 +81,8 @@ def sequencePossibilities_Of_Two(tag,other):
     return eliminateDoubles(ret)
     
     
-#Generates Sequences of one Tag
-def generateSequenceOfTag(tag,otherTag,length):
+def generateSequenceOfTag(tag,length):
+    """Generates Sequences of one Tag"""
     seq = []
     if(len(tag)<length):
         for iT in sequencePossibilities(tag):
@@ -79,9 +93,14 @@ def generateSequenceOfTag(tag,otherTag,length):
             for i in range(rang):
                 for iT in sequencePossibilities(tag):
                     seq.append(iT+str(i))
-        if(len(tag)+len(otherTag)<length):
-            for iT in sequencePossibilities_Of_Two(tag,otherTag):
-                seq.append(iT)
+    return eliminateDoubles(seq)
+
+def generateSequenceOfTags(tag,otherTag,length):
+    """#Generates sequences of two tags"""
+    seq=[]
+    if(len(tag)+len(otherTag)<length):
+        for iT in sequencePossibilities_Of_Two(tag,otherTag):
+            seq.append(iT)
         if((length-(len(tag)+len(otherTag))<3)):
              for i in range(length-len(tag)+len(otherTag)):
                  for iT in sequencePossibilities_Of_Two(tag,otherTag):
@@ -89,30 +108,33 @@ def generateSequenceOfTag(tag,otherTag,length):
     return eliminateDoubles(seq)
 
 
-#if the needed time is below 1/10
-#of a second
 def getCountTime(time):
+    """
+    if the needed time is below 1/10
+    of a second 
+    """
     if(time<1):return (1/10)/60
 
-#Main method of listgen
-#The Argument can be a xml file or
-#Just nothing and in this case
-#the generation information must be given
-#manually into the console
 def gen(person,pat):
+    """
+    Main method of listgen
+    The Argument can be a xml file or
+    Just nothing and in this case
+    the generation information must be given
+    manually into the console
+    """
     start_time = time.time()
     file = open(person.name+".txt","w+")
     person.sort_tags() #The tags are now sorted by their priority
     count=0
     for i in person.tags:
-        for w in person.tags:
-            if(i==w):continue
-            #The real generation sequence
-            passWS = generateSequenceOfTag(i.name,w.name,pat.max_length)
-            for passW in passWS:
-                if(evaluator.confirmedPattern(passW,pat)):
-                    file.write(passW+"\n")
-                    count+=1
+        if(evaluator.confirmedPattern(i.name,pat)!=True):continue
+        #The real generation sequence
+        passWS = generateSequenceOfTag(i.name,pat.max_length)
+        for passW in passWS:
+            if(evaluator.confirmedPattern(passW,pat)):
+                file.write(passW+"\n")
+                count+=1
     print("finished with "+str(count)+" results")
     print("Saved to " + person.name+".txt"," [ ",
           datetime.datetime.now().date()," ] "," [ ",
@@ -121,9 +143,11 @@ def gen(person,pat):
     print("File size: [",os.stat((person.name+".txt")).st_size  ,"]")
     print("Time : ", getCountTime((start_time-time.time()))," min")
 
-#generates passwords from xml file
-#Also possible with multiple persons
 def generate_from_file(filename):
+    """
+    generates passwords from xml file
+    Also possible with multiple persons
+    """
     if(filename.split(".")[1] in ["xml","XML"]):
         person_list = importer.import_persons(filename)
         pat = pattern.pattern()
@@ -138,9 +162,11 @@ def generate_from_file(filename):
            
            
 
-#In the case of generating wordlist
-#without a xml file
 def generate_manually():
+    """
+    In the case of generating wordlist
+    without a xml file
+    """
     pers = person.Person(input("person's alias:"))
     pat = pattern.pattern()
     pat.capital=ast.literal_eval(input("Capital Letters(True,False):"))
@@ -158,8 +184,10 @@ def generate_manually():
         else:break
     gen(pers,pat)
 
-#The main method in thi
 def generate_list(argv):
+    """
+    The main method in this module
+    """
     if(argv==None or len(argv)==0):
         generate_manually()
     else:

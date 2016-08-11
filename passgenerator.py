@@ -3,9 +3,10 @@
 #Version 1.0
 #License: MIT
 
-#Generates a password considering all the informations
-#about a person
-#for best security
+"""Generates a password considering all the informations
+about a person
+for best security
+"""
 
 import person
 import pattern
@@ -15,9 +16,11 @@ import random
 import evaluator
 
 
-#Considers the pattern and fills
-#The ret array with the possible chars
 def genPossibleChars(pers,pat):
+    """
+    Considers the pattern and fills
+    The ret array with the possible chars
+    """
     possible_chars = []
     possible_chars.append(string.ascii_lowercase)
     if(sec.Capital):
@@ -29,10 +32,12 @@ def genPossibleChars(pers,pat):
             possible_chars.remove(i)
     return random.shuffle(possible_chars)
 
-#Selects randomized the chars for the password
-#It breaks at the moment, when the password has
-#the right pattern
 def randomized_selection(chars,pat):
+    """
+    Selects randomized the chars for the password
+    It breaks at the moment, when the password has
+    the right pattern
+    """
     pattern_confirmed=False
     passW=""
     while(pattern_confirmed!=True):
@@ -42,14 +47,16 @@ def randomized_selection(chars,pat):
     return passW
 
 
-#Generation method
-#Considers all Tags about a person
-#And the pattern
-#And the security
-#Pers->Person
-#pat ->Pattern
-#sec ->security
 def genPass(pers,pat):
+    """
+    #Generation method
+    #Considers all Tags about a person
+    #And the pattern
+    #And the security
+    #Pers->Person
+    #pat ->Pattern
+    #sec ->security
+    """
     chars = genPossibleChars(pers,pat)
     password = randomized_selection(chars,pat.max_length)
     

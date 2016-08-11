@@ -3,48 +3,61 @@
 #Version 1.0
 #License: MIT
 
-#Designed to check the strength of a password
+"""
+Designed to check the strength of a password
+"""
 import re
 import tag
 
-#checks if password has Capital Letters
 def hasCapitalLetters(passW):
+    """
+    checks if password has Capital Letters
+    """
     for i in passW:
         if(i.isupper()):
             return True
     return False
     
-#Checks if password has Numbers
 def hasNumber(passW):
+    """
+    Checks if password has Numbers
+    """
     for i in ["0","1","2","3","4","5","6","7","8","9"]:
         if(i in passW):
             return True
     return False
 
-#Checks if the password has special characters
 def hasSpecialSymbols(passW):
+    """
+    Checks if the password has special characters
+    """
     if(re.match(r'^_-:,;<>+"*ç%&/()=?"',passW)):
         return True
     return False
 
-#Checks if the password has no connectio
-#To the informations about the person
-#Returns the strength of the Connection 0-10
 def hasConnection(passW,tags):
+    """
+    Checks if the password has no connectio
+    To the informations about the person
+    Returns the strength of the Connection 0-10
+    """
     connection=0
     for i in tags:
         if(i.name.lower() in passW.lower()):
             connection += i.priority/2
     return connection
 
-#Checks if the passWord has repeating patterns
 def checkForRepeatingPatterns(passW):
+    """
+    Checks if the passWord has repeating patterns
+    """
     r = re.compile(r"(.+?)(?=\1)")
     return len(r.findall(passW))
 
-
-#Checks if the password has the right pattern
 def confirmedPattern(passW,pat):
+    """
+    Checks if the password has the right pattern
+    """
     if(len(passW)<pat.min_length or len(passW)>pat.max_length):#Check length
         return False
     if(pat.numbers):
@@ -55,10 +68,11 @@ def confirmedPattern(passW,pat):
            return False
     return True
     
-#returns a integer from 0 to 10
-#Specifies the strength of a password
 def evaluate(passW,tags):
-    #Check length
+    """
+    returns a integer from 0 to 10
+    Specifies the strength of a password
+    """
     points = len(passW)/10
     if(hasCapitalLetters(passW)):points+=1
     if(hasNumber(passW)):points+=1
@@ -69,6 +83,7 @@ def evaluate(passW,tags):
 
 #
 if __name__== "__main__":
+    """if main"""
     passW = input("password:")
     tags = []
     while(True):
