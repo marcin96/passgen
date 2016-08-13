@@ -20,6 +20,8 @@ import importer
 import tag
 import person
 import logging
+import random
+import math
 
 logging.basicConfig()
 logger= logging.getLogger(__name__)
@@ -31,7 +33,10 @@ def isEnaughSpaceAviable(spaceN):
     enough spave aviable for the
     generation
     """
-    st = os.statvfs(path)
+    try:
+        st = os.statvfs(path)
+    except(Exception):
+        return -1
     sp_free = (st.f_bavail * st.f_frsize)
     if(sp_free>spaceN):
         return True
@@ -44,12 +49,18 @@ def howMuchSpaceNeeded(possibilities):
     """
     return possibilities * 8
 
-def howMuchPossibilities(tag,pattern):
+def howMuchPossibilities(tags,pat):
     """
     This method gives you the number of possibile
     combinations
     """
-    None
+    possib = len(tags)
+    diff = pat.max_length-pat.min_length
+    if(pat.numbers):
+        possib = possib *(diff*100) + 100
+    if(pat.capital):
+        possib *=3
+    return possib
     
 def workingTime(possibilities):
     """
@@ -65,16 +76,21 @@ def eliminateDoubles(seq):
     """
     return list(OrderedDict.fromkeys(seq))
 
-def calculate_statistic(tags,pattern):
+def calculate_statistic(tags,pat):
     """
     Calculates if the generation should be done or not.
     *isEnaughSpaceAviable(spaceA,spaceN)
     *howMuchPossibilities
     *workingTime
     """
-    print("Space Needed:> ~",howMuchSpaceNeeded())
-    print("Enough Space:>",isEnaughSpaceAviable(howMuchSpaceNeeded()))
-    print("Working Time:> ~",workingTime(howMuchPossibilities()))
+    pos = howMuchPossibilities(tags,pat)
+    space_n = howMuchSpaceNeeded(pos)
+    e_space = isEnaughSpaceAviable(space_n)
+    work_t = workingTime(pos)
+    print("Space Needed ~",space_n," bytes")
+    print("Enough Space ~",e_space)
+    print("Working Time ~",work_t, "seconds")
+    print("Possible_passwords ~",pos)
 
 def sequencePossibilities(tag,pat):
     """Sequences Posibilities of One Word"""
@@ -84,6 +100,8 @@ def sequencePossibilities(tag,pat):
     if(pat.capital):
         ret.append(tag.upper())
         ret.append(string.capwords(tag))
+    if(pat.special_characters):
+        ret.append(tag + random.choice(pat.specialCh_list))
     return eliminateDoubles(ret)
 
 def sequencePossibilities_Of_Two(tag,other,pat):
@@ -182,7 +200,7 @@ def gen(pers,pat):
           datetime.datetime.now().date()," ] "," [ ",
           datetime.datetime.now().time()," ]")
     file.close()
-    print("File size: [",os.stat((pers.name+".txt")).st_size  ,"]")
+    print("File size: [",os.stat((pers.name+".txt")).st_size  ," bytes]")
     print("Time : ", time.time()-start_time," min")
 
 def generate_from_file(filename):
@@ -232,7 +250,12 @@ def generate_manually():
                 pers.add_tagD(str(i.split(',')[0]).strip(),int(i.split(",")[1]))
             else:print("#is already in the tags")
         else:break
-    gen(pers,pat)
+    calculate_statistic(pers.tags,pat)
+    if(input("Wanna continue(yes/no)>") in ["y","Y","Yes","yes","YES"]):
+        gen(pers,pat)
+    else:
+        print("finish")
+        exit()
 
 def generate_list(argv):
     """
