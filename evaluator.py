@@ -6,8 +6,21 @@
 """
 Designed to check the strength of a password
 """
+
 import re
 import tag
+import pattern
+
+def hasSpecialChars(passW):
+    """
+    This method counts how many special chars
+    there in the current password
+    """
+    ret=0
+    for i in pattern.all_specials:
+        if( i in passW):
+            ret+=1
+    return ret
 
 def hasCapitalLetters(passW):
     """
