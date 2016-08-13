@@ -56,53 +56,65 @@ def eliminateDoubles(seq):
     """
     return list(OrderedDict.fromkeys(seq))
 
-def sequencePossibilities(tag):
+def calculate_statistic(tags,pattern):
+    """
+    Calculates if the generation should be done or not.
+    *isEnaughSpaceAviable(spaceA,spaceN)
+    *howMuchPossibilities
+    *workingTime
+    """
+    None
+
+def sequencePossibilities(tag,pat):
     """Sequences Posibilities of One Word"""
     ret = []
     ret.append(tag)
-    ret.append(tag.upper())
     ret.append(tag.lower())
-    ret.append(string.capwords(tag))
+    if(pat.capital):
+        ret.append(tag.upper())
+        ret.append(string.capwords(tag))
     return eliminateDoubles(ret)
 
-def sequencePossibilities_Of_Two(tag,other):
+def sequencePossibilities_Of_Two(tag,other,pat):
     """Sequences Posibilities of two Tags"""
     ret = []
     ret.append(tag+other)
-    ret.append(string.capwords(tag)+other)
-    ret.append(tag+string.capwords(other))
-    ret.append(string.capwords(tag)+string.capwords(other))
     ret.append(tag.lower()+other)
     ret.append(tag+other.lower())
     ret.append(tag.lower()+other.lower())
-    ret.append(tag.upper()+other.upper())
-    ret.append(tag.upper()+other)
-    ret.append(tag+other.upper())
+    if(pat.capital):
+       ret.append(string.capwords(tag)+other)
+       ret.append(tag+string.capwords(other))
+       ret.append(string.capwords(tag)+string.capwords(other))
+       ret.append(tag.upper()+other.upper())
+       ret.append(tag.upper()+other)
+       ret.append(tag+other.upper())
     return eliminateDoubles(ret)
     
     
-def generateSequenceOfTag(tag,length):
+def generateSequenceOfTag(tag,pat):
     """Generates Sequences of one Tag"""
     seq = []
-    if(len(tag)<length):
-        for iT in sequencePossibilities(tag):
+    if(len(tag)<pat.max_length):
+        for iT in sequencePossibilities(tag,pat):
             seq.append(iT)
-        diff=length-len(tag)
-        if(diff<3):
+        diff=pat.max_length-len(tag)
+        if(diff<3 and pat.numbers):
             rang = int(str(1)+diff*"0")
             for i in range(rang):
-                for iT in sequencePossibilities(tag):
+                for iT in sequencePossibilities(tag,pat):
                     seq.append(iT+str(i))
                     seq.append(str(i)+iT)
     return eliminateDoubles(seq)
 
 def generateSequenceOfTags(tags,length):
-    """Generates sequences of more tags"""
+    """Generates sequences of more tags
+       Combines tags together that fits the pattern.
+    """
     seq = []
     for i in tags:
             com = [tag.Tag(x.name+i.name,i.priority) for x in tags if (len(i.name)+len(x.name))<=length]
             for t in com:
-                print(t.name)
                 seq.append(t)
     return eliminateDoubles(seq)
 
@@ -149,7 +161,7 @@ def gen(pers,pat):
     for i in seq:
         if(evaluator.confirmedPattern(i.name,pat)!=True):continue
         #The real generation sequence
-        passWS = generateSequenceOfTag(i.name,pat.max_length)
+        passWS = generateSequenceOfTag(i.name,pat)
         for passW in passWS:
             if(evaluator.confirmedPattern(passW,pat)):
                 file.write(passW+"\n")
@@ -189,9 +201,17 @@ def generate_manually():
     pers = person.Person(input("person's alias:"))
     pat = pattern.pattern()
     pat.capital=ast.literal_eval(input("Capital Letters(True,False):"))
+    pat.numbers=ast.literal_eval(input("numbers(True,False):"))
+    pat.special_characters=ast.literal_eval(input("Special characters(True,False):"))
+    if(pat.special_characters):
+            char_tmp = input("Which caracters do you want to allow(separate with comma,for all write ALL):")
+            if(char_tmp=="ALL"):
+                pat.special_characters = pat.all_specials.split()
+            else:
+                for i in char_tmp.split(","):
+                    pat.special_characters.append(i)
     pat.min_length=int(input("minimal length:"))
     pat.max_length=int(input("maximal length:"))
-    pat.numbers=ast.literal_eval(input("numbers(True,False):"))
     print("Add Tags > name,priority (1-10)")
     print("Birthday,Name,Age,Name of Pet ect...")
     while(True):
@@ -214,4 +234,4 @@ def generate_list(argv):
 
 
 if __name__== "__main__":
-    generate_list(input())
+    generate_list(input("[]>"))
