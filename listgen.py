@@ -20,35 +20,39 @@ import importer
 import tag
 import person
 
-def isEnaughSpaceAviable(spaceA,spaceN):
+def isEnaughSpaceAviable(spaceN):
     """
     This method checks if there is
     enough spave aviable for the
     generation
     """
-    None
+    st = os.statvfs(path)
+    sp_free = (st.f_bavail * st.f_frsize)
+    if(sp_free>spaceN):
+        return True
+    return False
 
-def howMuchSpaceNeeded():
+def howMuchSpaceNeeded(possibilities):
     """
     calculates how much space is
-    needed
+    needed in Bytes
     """
-    None
+    return possibilities * 8
 
-def howMuchPossibilities():
+def howMuchPossibilities(tag,pattern):
     """
-    This method gives you the count of possbile
+    This method gives you the number of possibile
     combinations
     """
     None
     
-def workingTime(tags,pattern):
+def workingTime(possibilities):
     """
     This method says how long
     a generation would take with
     the parameters
     """
-    None
+    return possibilities /10000
 
 def eliminateDoubles(seq):
     """
@@ -63,7 +67,9 @@ def calculate_statistic(tags,pattern):
     *howMuchPossibilities
     *workingTime
     """
-    None
+    print("Space Needed:> ~",howMuchSpaceNeeded())
+    print("Enough Space:>",isEnaughSpaceAviable(howMuchSpaceNeeded()))
+    print("Working Time:> ~",workingTime(howMuchPossibilities()))
 
 def sequencePossibilities(tag,pat):
     """Sequences Posibilities of One Word"""
@@ -99,7 +105,7 @@ def generateSequenceOfTag(tag,pat):
         for iT in sequencePossibilities(tag,pat):
             seq.append(iT)
         diff=pat.max_length-len(tag)
-        if(diff<3 and pat.numbers):
+        if(diff<10 and pat.numbers):
             rang = int(str(1)+diff*"0")
             for i in range(rang):
                 for iT in sequencePossibilities(tag,pat):
@@ -159,11 +165,12 @@ def gen(pers,pat):
     seq = get_tags(pers.tags,pat.max_length)
     for i in pers.tags:seq.append(i)
     for i in seq:
-        if(evaluator.confirmedPattern(i.name,pat)!=True):continue
+        if(len(i.name)>pat.max_length or len(i.name)<pat.min_length):continue
         #The real generation sequence
         passWS = generateSequenceOfTag(i.name,pat)
         for passW in passWS:
             if(evaluator.confirmedPattern(passW,pat)):
+                print(passW)
                 file.write(passW+"\n")
                 count+=1
     print("finished with "+str(count)+" results")
@@ -172,7 +179,7 @@ def gen(pers,pat):
           datetime.datetime.now().time()," ]")
     file.close()
     print("File size: [",os.stat((pers.name+".txt")).st_size  ,"]")
-    print("Time : ", getCountTime((start_time-time.time()))," min")
+    print("Time : ", time.time()-start_time," min")
 
 def generate_from_file(filename):
     """
