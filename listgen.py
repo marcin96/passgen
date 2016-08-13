@@ -19,6 +19,11 @@ import datetime
 import importer
 import tag
 import person
+import logging
+
+logging.basicConfig()
+logger= logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 def isEnaughSpaceAviable(spaceN):
     """
@@ -105,7 +110,7 @@ def generateSequenceOfTag(tag,pat):
         for iT in sequencePossibilities(tag,pat):
             seq.append(iT)
         diff=pat.max_length-len(tag)
-        if(diff<10 and pat.numbers):
+        if(diff<3 and pat.numbers):
             rang = int(str(1)+diff*"0")
             for i in range(rang):
                 for iT in sequencePossibilities(tag,pat):
@@ -170,7 +175,6 @@ def gen(pers,pat):
         passWS = generateSequenceOfTag(i.name,pat)
         for passW in passWS:
             if(evaluator.confirmedPattern(passW,pat)):
-                print(passW)
                 file.write(passW+"\n")
                 count+=1
     print("finished with "+str(count)+" results")

@@ -10,6 +10,11 @@ Designed to check the strength of a password
 import re
 import tag
 import pattern
+import logging
+
+logging.basicConfig()
+logger= logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 def hasSpecialChars(passW):
     """

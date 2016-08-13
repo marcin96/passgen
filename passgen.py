@@ -5,11 +5,16 @@
 
 import sys
 import os
+import logging
 
 #Project Imports
 import evaluator
 import listgen
 import passgenerator
+
+logging.basicConfig()
+logger= logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 def help_me():
     print("for more help go to>> https://github.com/marcin96/passgen/blob/master/Tutorial.pdf")
