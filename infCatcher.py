@@ -1,3 +1,10 @@
+#!/usr/bin/python
+
+#Author Marcin Cherek
+#Language: Python 3.4
+#Version 1.0
+#License: MIT
+
 """
 This module is for searching local informations
 about you. It creates a profile for generating possible passwords

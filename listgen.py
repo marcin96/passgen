@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 #Author Marcin Cherek
 #Language: Python 3.4
 #Version 1.0
@@ -128,7 +130,7 @@ def generateSequenceOfTag(tag,pat):
         for iT in sequencePossibilities(tag,pat):
             seq.append(iT)
         diff=pat.max_length-len(tag)
-        if(diff<3 and pat.numbers):
+        if(diff<2 and pat.numbers):
             rang = int(str(1)+diff*"0")
             for i in range(rang):
                 for iT in sequencePossibilities(tag,pat):
@@ -265,7 +267,7 @@ def generate_list(argv):
         generate_manually()
     else:
         generate_from_file(argv[0])
-
+        
 
 if __name__== "__main__":
     generate_list(input("[]>"))
