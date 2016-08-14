@@ -34,6 +34,9 @@ def main(argv):
     #Evaluate
     elif(argv[0]=="-e"):
         None
+    #info_sec_Profile
+    elif(argv[0]=="-i2p"):
+        None
     #Help
     elif(argv[0]=="-help"):
         help_me()

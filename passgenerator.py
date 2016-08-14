@@ -16,6 +16,7 @@ import tag
 import string
 import random
 import evaluator
+import sys
 
 
 def genPossibleChars(pers,pat):
@@ -61,9 +62,11 @@ def genPass(pers,pat):
     """
     chars = genPossibleChars(pers,pat)
     password = randomized_selection(chars,pat.max_length)
-    
+
+def Gmain(argv):
+    None
     
     
 
 if __name__== "__main__":
-    None
+    Gmain(sys.argv)

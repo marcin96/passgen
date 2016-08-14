@@ -1,0 +1,12 @@
+Put tag and pattern input into importer.py []
+Write test cases []
+Write infCatcher []
+Choose a better name for package []
+make github project page []
+make github wiki for project []
+make youtube video for project []
+optimize code []
+optimize docstrings []
+Error catching []
+make private <- public methods []
+Make first realise after 100 + commits !

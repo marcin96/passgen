@@ -14,7 +14,6 @@ class Tag():
     """
     name=""
     priority=0
-    isnumeric = False
     def __init__(self,name,priority):
         if(self.__eval_arguments(name,priority)):
             self.name=name
