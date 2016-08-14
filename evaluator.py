@@ -18,13 +18,13 @@ logging.basicConfig()
 logger= logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-def hasSpecialChars(passW):
+def hasSpecialChars(passW,pat):
     """
     This method counts how many special chars
     there in the current password
     """
     ret=0
-    for i in pattern.all_specials:
+    for i in pat.specialCh_list:
         if( i in passW):
             ret+=1
     return ret
@@ -33,19 +33,21 @@ def hasCapitalLetters(passW):
     """
     checks if password has Capital Letters
     """
+    count = 0
     for i in passW:
         if(i.isupper()):
-            return True
-    return False
+            count+=1
+    return count
     
 def hasNumber(passW):
     """
     Checks if password has Numbers
     """
+    count=0
     for i in ["0","1","2","3","4","5","6","7","8","9"]:
         if(i in passW):
-            return True
-    return False
+            count+=1
+    return count
 
 def hasSpecialSymbols(passW):
     """
@@ -81,11 +83,14 @@ def confirmedPattern(passW,pat):
     if(len(passW)<pat.min_length or len(passW)>pat.max_length):#Check length
         return False
     if(pat.numbers):
-        if(hasNumber(passW)!=True):
+        if(hasNumber(passW)==0):
             return False
     if(pat.capital):
-        if(hasCapitalLetters(passW)!=True):
-           return False
+        if(hasCapitalLetters(passW)==0):
+            return False
+    if(pat.special_characters):
+        if(hasSpecialChars(passW,pat)==0):
+            return False
     return True
     
 def evaluate(passW,tags):
@@ -94,8 +99,8 @@ def evaluate(passW,tags):
     Specifies the strength of a password
     """
     points = len(passW)/10
-    if(hasCapitalLetters(passW)):points+=1
-    if(hasNumber(passW)):points+=1
+    if(hasCapitalLetters(passW)):points+=hasCapitalLetters(passW)
+    if(hasNumber(passW)):points+=hasNumber(passW)
     if(hasSpecialSymbols(passW)):points+=1
     points-=hasConnection(passW,tags)
     points-=checkForRepeatingPatterns(passW)/2

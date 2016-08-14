@@ -24,6 +24,7 @@ import person
 import logging
 import random
 import math
+import sys
 
 logging.basicConfig()
 logger= logging.getLogger(__name__)
@@ -103,7 +104,13 @@ def sequencePossibilities(tag,pat):
         ret.append(tag.upper())
         ret.append(string.capwords(tag))
     if(pat.special_characters):
-        ret.append(tag + random.choice(pat.specialCh_list))
+        for i in pat.specialCh_list:
+            ret.append(tag+i)
+            ret.append(tag.upper()+i)
+            ret.append(string.capwords(tag)+i)
+            ret.append(i+tag)
+            ret.append(i+tag.upper())
+            ret.append(i+string.capwords(tag))
     return eliminateDoubles(ret)
 
 def sequencePossibilities_Of_Two(tag,other,pat):
@@ -129,13 +136,14 @@ def generateSequenceOfTag(tag,pat):
     if(len(tag)<pat.max_length):
         for iT in sequencePossibilities(tag,pat):
             seq.append(iT)
-        diff=pat.max_length-len(tag)
+        diff=pat.min_length-len(tag)
         if(diff<2 and pat.numbers):
             rang = int(str(1)+diff*"0")
             for i in range(rang):
                 for iT in sequencePossibilities(tag,pat):
-                    seq.append(iT+str(i))
-                    seq.append(str(i)+iT)
+                    if(evaluator.hasNumber(iT)==0):
+                        seq.append(iT+str(i))
+                        seq.append(str(i)+iT)
     return eliminateDoubles(seq)
 
 def generateSequenceOfTags(tags,length):
@@ -175,6 +183,27 @@ def get_tags(tags,length):
           break
    return seq
 
+# Print iterations progress
+def printProgress (iteration, total, prefix = '', suffix = '', decimals = 2, barLength = 100):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : number of decimals in percent complete (Int)
+        barLength   - Optional  : character length of bar (Int)
+    """
+    filledLength    = int(round(barLength * iteration / float(total)))
+    percents        = round(100.00 * (iteration / float(total)), decimals)
+    bar             = '█' * filledLength + '-' * (barLength - filledLength)
+    sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
+    sys.stdout.flush()
+    if iteration == total:
+        sys.stdout.write('\n')
+        sys.stdout.flush()
+
 def gen(pers,pat):
     """
     Main method of listgen
@@ -194,16 +223,18 @@ def gen(pers,pat):
         #The real generation sequence
         passWS = generateSequenceOfTag(i.name,pat)
         for passW in passWS:
+            printProgress(count,len(passWS),prefix = 'Progress:', suffix = 'Complete')
             if(evaluator.confirmedPattern(passW,pat)):
                 file.write(passW+"\n")
                 count+=1
-    print("finished with "+str(count)+" results")
+    print("\nfinished with "+str(count)+" results")
     print("Saved to " + pers.name+".txt"," [ ",
           datetime.datetime.now().date()," ] "," [ ",
           datetime.datetime.now().time()," ]")
     file.close()
     print("File size: [",os.stat((pers.name+".txt")).st_size  ," bytes]")
-    print("Time : ", time.time()-start_time," min")
+    print("Time : ", time.time()-start_time," sec")
+    input("<Finish>")
 
 def generate_from_file(filename):
     """
@@ -237,7 +268,7 @@ def generate_manually():
     if(pat.special_characters):
             char_tmp = input("Which caracters do you want to allow(separate with comma,for all write ALL):")
             if(char_tmp=="ALL"):
-                pat.special_characters = pat.all_specials.split()
+                pat.specialCh_list = pat.all_specials.split(" ")
             else:
                 for i in char_tmp.split(","):
                     pat.special_characters.append(i)

@@ -12,7 +12,7 @@ class pattern():
     numbers
     Capital Letters
     """
-    all_specials="#$%&\'()*+,-./:;?@[\\]^_`{|}~"
+    all_specials="# $ % & \ ' ( ) * + , - . / : ; ? @ [ \ \ ] ^ _ ` { | } ~ "
     capital=False
     numbers=False
     min_length=8
