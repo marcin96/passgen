@@ -8,9 +8,9 @@
 import os
 import sys
 from xml.dom import minidom
-import person
-import tag
-import pattern
+from passgen import person
+from passgen import tag
+from passgen import pattern
 
 #return persons and a pattern in a List
 #If there is a pattern it will be on the position 0

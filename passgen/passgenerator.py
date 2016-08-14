@@ -10,12 +10,12 @@ about a person
 for best security
 """
 
-import person
-import pattern
-import tag
+from passgen import person
+from passgen import pattern
+from passgen import tag
 import string
 import random
-import evaluator
+from passgen import evaluator
 import sys
 
 
@@ -26,10 +26,12 @@ def genPossibleChars(pers,pat):
     """
     possible_chars = []
     possible_chars.append(string.ascii_lowercase)
-    if(sec.Capital):
+    if(sec.Capital != pattern.pattern_Status.forbidden):
         possible_chars.append(ascii_uppercase)
-    if(sec.Number):
+    if(sec.Number != pattern.pattern_Status.forbidden):
         possible_chars.append(string.digits)
+    if(sec.special_character != pattern.pattern_Status.forbidden):
+        None #ToDo
     for i in pers.tags:
         if(i.isdigit()):
             possible_chars.remove(i)
@@ -44,7 +46,7 @@ def randomized_selection(chars,pat):
     pattern_confirmed=False
     passW=""
     while(pattern_confirmed!=True):
-        if(evaluaor.confirmedPattern(passW,pat):
+        if(evaluaor.confirmedPattern(passW,pat)):
            pattern_confirmed =True
            break
     return passW

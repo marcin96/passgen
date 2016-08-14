@@ -11,20 +11,22 @@ Generates Wordlists with specified pattern and person.
 
 import os
 import time
-import pattern
 import random
-import evaluator
 import string
 import ast
 from collections import OrderedDict
 import datetime
-import importer
-import tag
-import person
+from passgen import evaluator
+from passgen import importer
+from passgen import passgenerator
+from passgen import tag
+from passgen import pattern
+from passgen import person
 import logging
 import random
 import math
 import sys
+import platform
 
 logging.basicConfig()
 logger= logging.getLogger(__name__)
@@ -100,10 +102,10 @@ def sequencePossibilities(tag,pat):
     ret = []
     ret.append(tag)
     ret.append(tag.lower())
-    if(pat.capital):
+    if(pat.capital != pattern.pattern_Status.forbidden):
         ret.append(tag.upper())
         ret.append(string.capwords(tag))
-    if(pat.special_characters):
+    if(pat.special_characters != pattern.pattern_Status.forbidden):
         for i in pat.specialCh_list:
             ret.append(tag+i)
             ret.append(tag.upper()+i)
@@ -136,8 +138,9 @@ def generateSequenceOfTag(tag,pat):
     if(len(tag)<pat.max_length):
         for iT in sequencePossibilities(tag,pat):
             seq.append(iT)
-        diff=pat.min_length-len(tag)
-        if(diff<2 and pat.numbers):
+        diff=pat.max_length-len(tag)
+        if(diff>0 and pat.numbers != pattern.pattern_Status.forbidden):
+            if(diff>2):diff=2
             rang = int(str(1)+diff*"0")
             for i in range(rang):
                 for iT in sequencePossibilities(tag,pat):
@@ -184,7 +187,7 @@ def get_tags(tags,length):
    return seq
 
 # Print iterations progress
-def printProgress (iteration, total, prefix = '', suffix = '', decimals = 2, barLength = 100):
+def printProgress (iteration, total, prefix = '', suffix = '', decimals = 2, barLength = 10):
     """
     Call in a loop to create terminal progress bar
     @params:
@@ -198,11 +201,15 @@ def printProgress (iteration, total, prefix = '', suffix = '', decimals = 2, bar
     filledLength    = int(round(barLength * iteration / float(total)))
     percents        = round(100.00 * (iteration / float(total)), decimals)
     bar             = '█' * filledLength + '-' * (barLength - filledLength)
+    if(platform.system()=="Windows"):os.system("cls")
+    else:os.system("clear")
     sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
-    sys.stdout.flush()
+    #sys.stdout.flush()
     if iteration == total:
         sys.stdout.write('\n')
-        sys.stdout.flush()
+        #sys.stdout.flush()
+        if(platform.system()=="Windows"):os.system("cls")
+        else:os.system("clear")
 
 def gen(pers,pat):
     """
@@ -252,8 +259,17 @@ def generate_from_file(filename):
     else:
         print("Wrong file extension")
         print("Please only ->xml")
-           
-           
+
+def inputTopat_status(inputW):
+    """
+    String to the enum type pattern_StatusSpe
+    """
+    if(inputW=="musthave"):
+        return pattern.pattern_Status.forced
+    elif(inputW=="optional"):
+        return pattern.pattern_Status.optional
+    elif(inputW=="forbidden"):
+        return pattern.pattern_Status.forbidden
 
 def generate_manually():
     """
@@ -262,16 +278,16 @@ def generate_manually():
     """
     pers = person.Person(input("person's alias:"))
     pat = pattern.pattern()
-    pat.capital=ast.literal_eval(input("Capital Letters(True,False):"))
-    pat.numbers=ast.literal_eval(input("numbers(True,False):"))
-    pat.special_characters=ast.literal_eval(input("Special characters(True,False):"))
+    pat.capital=inputTopat_status(input("Capital Letters(musthave,optional,forbidden):"))
+    pat.numbers=inputTopat_status(input("numbers(musthave,optional,forbidden):"))
+    pat.special_characters=inputTopat_status(input("Special characters(musthave,optional,forbidden):"))
     if(pat.special_characters):
             char_tmp = input("Which caracters do you want to allow(separate with comma,for all write ALL):")
             if(char_tmp=="ALL"):
                 pat.specialCh_list = pat.all_specials.split(" ")
             else:
                 for i in char_tmp.split(","):
-                    pat.special_characters.append(i)
+                    pat.specialCh_list.append(i)
     pat.min_length=int(input("minimal length:"))
     pat.max_length=int(input("maximal length:"))
     print("Add Tags > name,priority (1-10)")
@@ -294,10 +310,10 @@ def generate_list(argv):
     """
     The main method in this module
     """
-    if(argv==None or len(argv)==0):
+    if(argv==None or len(argv)==1):
         generate_manually()
     else:
-        generate_from_file(argv[0])
+        generate_from_file(argv[1])
         
 
 if __name__== "__main__":

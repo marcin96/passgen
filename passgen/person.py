@@ -5,7 +5,7 @@
 #Version 1.0
 #License: MIT
 
-import tag
+from passgen import tag
 class Person():
     """
     This class handles a person with its tags

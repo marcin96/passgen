@@ -10,8 +10,9 @@ Designed to check the strength of a password
 """
 
 import re
-import tag
-import pattern
+from passgen import tag
+from passgen import pattern
+from passgen import person
 import logging
 
 logging.basicConfig()
@@ -66,6 +67,7 @@ def hasConnection(passW,tags):
     connection=0
     for i in tags:
         if(i.name.lower() in passW.lower()):
+            print("[Found Connection]>",i.name.lower())
             connection += i.priority/2
     return connection
 
@@ -82,14 +84,14 @@ def confirmedPattern(passW,pat):
     """
     if(len(passW)<pat.min_length or len(passW)>pat.max_length):#Check length
         return False
-    if(pat.numbers):
-        if(hasNumber(passW)==0):
+    if(pat.numbers == pattern.pattern_Status.forbidden):
+        if(hasNumber(passW) !=0):
             return False
-    if(pat.capital):
-        if(hasCapitalLetters(passW)==0):
+    if(pat.capital == pattern.pattern_Status.forbidden):
+        if(hasCapitalLetters(passW) !=0):
             return False
-    if(pat.special_characters):
-        if(hasSpecialChars(passW,pat)==0):
+    if(pat.special_characters == pattern.pattern_Status.forbidden):
+        if(hasSpecialChars(passW,pat) !=0):
             return False
     return True
     
@@ -98,17 +100,24 @@ def evaluate(passW,tags):
     returns a integer from 0 to 10
     Specifies the strength of a password
     """
-    points = len(passW)/10
-    if(hasCapitalLetters(passW)):points+=hasCapitalLetters(passW)
-    if(hasNumber(passW)):points+=hasNumber(passW)
-    if(hasSpecialSymbols(passW)):points+=1
-    points-=hasConnection(passW,tags)
-    points-=checkForRepeatingPatterns(passW)/2
-    return points
+    points = len(passW)/3
+    h_C = hasCapitalLetters(passW)
+    h_N = hasNumber(passW)
+    h_S = hasSpecialSymbols(passW)
+    conn = hasConnection(passW,tags)
+    print("length>",len(passW))
+    points+=h_C
+    print("Capital Letters>",h_C)
+    points+=h_N
+    print("Numbers>",h_N)
+    points+=h_S
+    print("Special Symbols>",h_S)
+    points-=conn
+    print("Connection>",conn)
+    #points-=checkForRepeatingPatterns(passW)/2
+    return abs(int(points))
 
-#
-if __name__== "__main__":
-    """if main"""
+def Emain(argv):
     passW = input("password:")
     tags = []
     while(True):
@@ -117,4 +126,9 @@ if __name__== "__main__":
             tags.append(tag.Tag(str(i.split(',')[0]).strip(),int(i.split(",")[1])))
         else:
             break
-    print("strength:",evaluate(passW,tags))
+    print("strength(Scala 1-10)>",evaluate(passW,tags))
+#
+if __name__== "__main__":
+    #Entry Point
+    """if main"""
+    Emain(sys.argv)
