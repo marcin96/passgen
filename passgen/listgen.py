@@ -186,25 +186,16 @@ def get_tags(tags,length):
           break
    return seq
 
-# Print iterations progress
 def printProgress (iteration, total, prefix = '', suffix = '', decimals = 2, barLength = 10):
     """
-    Call in a loop to create terminal progress bar
-    @params:
-        iteration   - Required  : current iteration (Int)
-        total       - Required  : total iterations (Int)
-        prefix      - Optional  : prefix string (Str)
-        suffix      - Optional  : suffix string (Str)
-        decimals    - Optional  : number of decimals in percent complete (Int)
-        barLength   - Optional  : character length of bar (Int)
+    creates terminal progress bar
     """
     filledLength    = int(round(barLength * iteration / float(total)))
     percents        = round(100.00 * (iteration / float(total)), decimals)
     bar             = '█' * filledLength + '-' * (barLength - filledLength)
-    if(platform.system()=="Windows"):os.system("cls")
-    else:os.system("clear")
+    sys.stdout.write('\r')
     sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
-    #sys.stdout.flush()
+    sys.stdout.flush()
     if iteration == total:
         sys.stdout.write('\n')
         #sys.stdout.flush()
@@ -223,14 +214,16 @@ def gen(pers,pat):
     file = open(pers.name+".txt","w+")
     pers.sort_tags() #The tags are now sorted by their priority
     count=0
+    count2=0
     seq = get_tags(pers.tags,pat.max_length)
     for i in pers.tags:seq.append(i)
     for i in seq:
+        printProgress(count2,len(seq),prefix = 'Progress:', suffix = 'Complete')
+        count2+=1
         if(len(i.name)>pat.max_length or len(i.name)<pat.min_length):continue
         #The real generation sequence
         passWS = generateSequenceOfTag(i.name,pat)
         for passW in passWS:
-            printProgress(count,len(passWS),prefix = 'Progress:', suffix = 'Complete')
             if(evaluator.confirmedPattern(passW,pat)):
                 file.write(passW+"\n")
                 count+=1
@@ -264,11 +257,11 @@ def inputTopat_status(inputW):
     """
     String to the enum type pattern_StatusSpe
     """
-    if(inputW=="musthave"):
-        return pattern.pattern_Status.forced
-    elif(inputW=="optional"):
+    if(inputW.lower().strip() in ["musthave","must","m"]):
+        return pattern.pattern_Status.musthave
+    elif(inputW.lower().strip() in ["optional","opt","o"]):
         return pattern.pattern_Status.optional
-    elif(inputW=="forbidden"):
+    elif(inputW.lower().strip() in ["forbidden","forb","f"]):
         return pattern.pattern_Status.forbidden
 
 def generate_manually():
@@ -281,7 +274,7 @@ def generate_manually():
     pat.capital=inputTopat_status(input("Capital Letters(musthave,optional,forbidden):"))
     pat.numbers=inputTopat_status(input("numbers(musthave,optional,forbidden):"))
     pat.special_characters=inputTopat_status(input("Special characters(musthave,optional,forbidden):"))
-    if(pat.special_characters):
+    if(pat.special_characters!=pattern.pattern_Status.forbidden):
             char_tmp = input("Which caracters do you want to allow(separate with comma,for all write ALL):")
             if(char_tmp=="ALL"):
                 pat.specialCh_list = pat.all_specials.split(" ")

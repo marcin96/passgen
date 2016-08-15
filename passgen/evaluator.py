@@ -78,21 +78,25 @@ def checkForRepeatingPatterns(passW):
     r = re.compile(r"(.+?)(?=\1)")
     return len(r.findall(passW))
 
+def isStatusChecked(status,iN):
+    if(status == pattern.pattern_Status.forbidden):
+        if(iN>0):return False
+    if(status==pattern.pattern_Status.musthave):
+        if(iN==0):return False
+    return True
+
 def confirmedPattern(passW,pat):
     """
     Checks if the password has the right pattern
     """
-    if(len(passW)<pat.min_length or len(passW)>pat.max_length):#Check length
+    if(len(passW)<pat.min_length or len(passW)>pat.max_length):
         return False
-    if(pat.numbers == pattern.pattern_Status.forbidden):
-        if(hasNumber(passW) !=0):
-            return False
-    if(pat.capital == pattern.pattern_Status.forbidden):
-        if(hasCapitalLetters(passW) !=0):
-            return False
-    if(pat.special_characters == pattern.pattern_Status.forbidden):
-        if(hasSpecialChars(passW,pat) !=0):
-            return False
+    if(isStatusChecked(pat.numbers,hasNumber(passW))==False):
+        return False
+    if(isStatusChecked(pat.capital,hasCapitalLetters(passW))==False):
+        return False
+    if(isStatusChecked(pat.special_characters,hasSpecialChars(passW,pat))==False):
+        return False
     return True
     
 def evaluate(passW,tags):

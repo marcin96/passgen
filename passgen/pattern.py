@@ -30,6 +30,6 @@ class pattern_Status(Enum):
     [optional
     [forbidden to be
     """
-    forced = 1
+    musthave = 1
     optional = 2
     forbidden = 3
