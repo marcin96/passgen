@@ -23,6 +23,13 @@ logger.setLevel(logging.INFO)
 
 VERSION=1.0
 
+def check_environment():
+    '''
+    Checks the python version
+    '''
+    if sys.version_info < (3.0):
+        raise "must use python 3.0 or greater"
+    
 def help_me():
     print("""
     usage: passgen [-version] [-help] [-gl] [-gp] [-e] [-update]
@@ -60,6 +67,7 @@ def print_hai():
 #Analyses the parameters
 def main(argv):
     #generate List
+    if(len(argv)==1):return 0
     if(argv[1]=="-gl"):
         print_hai()
         listgen.generate_list(argv[1:])
