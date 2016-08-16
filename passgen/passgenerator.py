@@ -17,6 +17,7 @@ from passgen import importer
 import string
 import random
 from passgen import evaluator
+from random import randint
 import sys
 
 
@@ -25,18 +26,20 @@ def genPossibleChars(pers,pat):
     Considers the pattern and fills
     The ret array with the possible chars
     """
-    possible_chars = []
-    possible_chars.append(string.ascii_lowercase)
-    if(sec.Capital != pattern.pattern_Status.forbidden):
-        possible_chars.append(ascii_uppercase)
-    if(sec.Number != pattern.pattern_Status.forbidden):
-        possible_chars.append(string.digits)
-    if(sec.special_character != pattern.pattern_Status.forbidden):
-        None #ToDo
+    possible_chars = ""
+    possible_chars+=string.ascii_lowercase
+    if(pat.capital != pattern.pattern_Status.forbidden):
+        possible_chars+=string.ascii_uppercase
+    if(pat.numbers != pattern.pattern_Status.forbidden):
+        possible_chars+=string.digits
+    if(pat.special_characters != pattern.pattern_Status.forbidden):
+        possible_chars+="".join(pat.specialCh_list)
+    '''
     for i in pers.tags:
         if(i.isdigit()):
             possible_chars.remove(i)
-    return random.shuffle(possible_chars)
+    '''
+    return possible_chars
 
 def randomized_selection(chars,pat):
     """
@@ -44,12 +47,9 @@ def randomized_selection(chars,pat):
     It breaks at the moment, when the password has
     the right pattern
     """
-    pattern_confirmed=False
-    passW=""
-    while(pattern_confirmed!=True):
-        if(evaluaor.confirmedPattern(passW,pat)):
-           pattern_confirmed =True
-           break
+    passW = ""
+    for c in range(pat.max_length):
+        passW += chars[randint(0,len(chars)-1)]
     return passW
 
 
@@ -64,10 +64,12 @@ def genPass(pers,pat):
     #sec ->security
     """
     chars = genPossibleChars(pers,pat)
-    password = randomized_selection(chars,pat.max_length)
+    password = randomized_selection(chars,pat)
+    print("Password>",password)
 
 def Gmain(argv):
     '''
+    Entry Point passgenerator
     '''
     if(len(argv)<=1):
         genPass(importer.InputPers(),importer.InputPat())
