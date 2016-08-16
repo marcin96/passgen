@@ -196,11 +196,6 @@ def printProgress (iteration, total, prefix = '', suffix = '', decimals = 2, bar
     sys.stdout.write('\r')
     sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
     sys.stdout.flush()
-    if iteration == total:
-        sys.stdout.write('\n')
-        #sys.stdout.flush()
-        if(platform.system()=="Windows"):os.system("cls")
-        else:os.system("clear")
 
 def gen(pers,pat):
     """
@@ -218,7 +213,7 @@ def gen(pers,pat):
     seq = get_tags(pers.tags,pat.max_length)
     for i in pers.tags:seq.append(i)
     for i in seq:
-        printProgress(count2,len(seq),prefix = 'Progress:', suffix = 'Complete')
+        printProgress(count2+1,len(seq),prefix = 'Progress:', suffix = 'Complete')
         count2+=1
         if(len(i.name)>pat.max_length or len(i.name)<pat.min_length):continue
         #The real generation sequence
