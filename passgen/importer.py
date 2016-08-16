@@ -40,6 +40,50 @@ def import_persons(xml_file):
         ret.append(person_tmp)
     return ret
 
+def inputTopat_status(inputW):
+    """
+    String to the enum type pattern_StatusSpe
+    """
+    if(inputW.lower().strip() in ["musthave","must","m"]):
+        return pattern.pattern_Status.musthave
+    elif(inputW.lower().strip() in ["optional","opt","o"]):
+        return pattern.pattern_Status.optional
+    elif(inputW.lower().strip() in ["forbidden","forb","f"]):
+        return pattern.pattern_Status.forbidden
+
+def InputPat():
+    '''
+    '''
+    pat = pattern.pattern()
+    pat.capital=inputTopat_status(input("Capital Letters(musthave,optional,forbidden):"))
+    pat.numbers=inputTopat_status(input("numbers(musthave,optional,forbidden):"))
+    pat.special_characters=inputTopat_status(input("Special characters(musthave,optional,forbidden):"))
+    if(pat.special_characters!=pattern.pattern_Status.forbidden):
+            char_tmp = input("Which caracters do you want to allow(separate with comma,for all write ALL):")
+            if(char_tmp=="ALL"):
+                pat.specialCh_list = pat.all_specials.split(" ")
+            else:
+                for i in char_tmp.split(","):
+                    pat.specialCh_list.append(i)
+    pat.min_length=int(input("minimal length:"))
+    pat.max_length=int(input("maximal length:"))
+    return pat
+
+def InputPers():
+    '''
+    '''
+    pers = person.Person(input("person's alias:"))
+    print("Add Tags > name,priority (1-10)")
+    print("Birthday,Name,Age,Name of Pet ect...")
+    while(True):
+        i=input("TAG>")
+        if(i!=""):
+            if(pers.isTag(str(i.split(',')[0]).strip())!=True):
+                pers.add_tagD(str(i.split(',')[0]).strip(),int(i.split(",")[1]))
+            else:print("#is already in the tags")
+        else:break
+    return pers
+
 if __name__ == '__main__':
     print("found [",len(import_persons(input("FILE>"))),"] persons")
     

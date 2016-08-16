@@ -13,6 +13,7 @@ for best security
 from passgen import person
 from passgen import pattern
 from passgen import tag
+from passgen import importer
 import string
 import random
 from passgen import evaluator
@@ -66,7 +67,12 @@ def genPass(pers,pat):
     password = randomized_selection(chars,pat.max_length)
 
 def Gmain(argv):
-    None
+    '''
+    '''
+    if(len(argv)<=1):
+        genPass(importer.InputPers(),importer.InputPat())
+    else:
+        None
     
     
 

@@ -13,6 +13,7 @@ import re
 from passgen import tag
 from passgen import pattern
 from passgen import person
+from passgen import importer
 import logging
 
 logging.basicConfig()
@@ -123,13 +124,7 @@ def evaluate(passW,tags):
 
 def Emain(argv):
     passW = input("password:")
-    tags = []
-    while(True):
-        i = input("Tag>")
-        if(i!=""):
-            tags.append(tag.Tag(str(i.split(',')[0]).strip(),int(i.split(",")[1])))
-        else:
-            break
+    tags = importer.InputPers().tags
     print("strength(Scala 1-10)>",evaluate(passW,tags))
 #
 if __name__== "__main__":
