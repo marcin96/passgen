@@ -69,6 +69,12 @@ def InputPat():
     pat.max_length=int(input("maximal length:"))
     return pat
 
+def correct_input(inp):
+    '''
+    '''
+    if("," not in inp):return False
+    return True
+
 def InputPers():
     '''
     '''
@@ -77,11 +83,14 @@ def InputPers():
     print("Birthday,Name,Age,Name of Pet ect...")
     while(True):
         i=input("TAG>")
-        if(i!=""):
+        if(i!="" and correct_input(i)):
             if(pers.isTag(str(i.split(',')[0]).strip())!=True):
                 pers.add_tagD(str(i.split(',')[0]).strip(),int(i.split(",")[1]))
             else:print("#is already in the tags")
-        else:break
+        else:
+            if( i==""):break;
+            else:
+                print("check your input #Wrong Syntax")
     return pers
 
 if __name__ == '__main__':
