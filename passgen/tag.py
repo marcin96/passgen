@@ -19,7 +19,7 @@ class Tag():
             self.name=name
             self.priority=priority
         else:
-           None
+           raise "Type Error"
            
     def __eval_arguments(self,name,priority):
         """

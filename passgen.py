@@ -17,8 +17,8 @@ from passgen import tag
 from passgen import pattern
 from passgen import person
 
-logging.basicConfig()
-logger= logging.getLogger(__name__)
+logging.basicConfig(filename='~log.log',level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 VERSION=1.0
@@ -28,6 +28,7 @@ def check_environment():
     Checks the python version
     '''
     if sys.version_info < (3.0):
+        logger.critical("Wrong Python Version")
         raise "must use python 3.0 or greater"
     
 def help_me():
@@ -70,14 +71,17 @@ def main(argv):
     if(len(argv)==1):return 0
     if(argv[1]=="-gl"):
         print_hai()
+        logger.info("<<Listgen>>")
         listgen.generate_list(argv[1:])
     #generate Password
     elif(argv[1]=="-gp"):
         print_hai()
+        logger.info("<<passgenerator>>")
         passgenerator.Gmain(argv[1:])
     #Evaluate
     elif(argv[1]=="-e"):
         print_hai()
+        logger.info("<<evaluator>>")
         evaluator.Emain(argv[1:])
     #Help
     elif(argv[1]=="-help"):
@@ -92,4 +96,23 @@ def main(argv):
 if __name__ == "__main__":
     #Entry Point
     """if main"""
-    main(sys.argv)
+    if(len(sys.argv)==1):
+        help_me()
+        exit()
+    try:
+        main(sys.argv)
+    except RuntimeError:
+        logger.error("Runtime Error, possibly to much possible passwords and to view hd space for file.")
+    except TypeError:
+        logger.error("Type Error, possibly wrong input#Wrong XML")
+    except NameError:
+        logger.error("Name Error, name not found,,,,this error shouldn't happen")
+    except IOError:
+        logger.error("IO Error , sth wrong with path, or you don't have permission to edit a file.")
+    except OSError:
+        logger.error("OS Error, wrong OS, passgen was only tested on Windows and Linux")
+    except ValueError:
+        logger.error("Wrong Value Input")
+    else:
+        logger.error("Not defined error")
+        
