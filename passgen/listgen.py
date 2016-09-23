@@ -27,6 +27,7 @@ import random
 import math
 import sys
 import platform
+import itertools
 
 logging.basicConfig()
 logger= logging.getLogger(__name__)
@@ -97,69 +98,6 @@ def calculate_statistic(tags,pat):
     print("Working Time ~",work_t, "seconds")
     print("Possible_passwords ~",pos)
 
-def sequencePossibilities(tag,pat):
-    """Sequences Posibilities of One Word"""
-    ret = []
-    ret.append(tag)
-    ret.append(tag.lower())
-    if(pat.capital != pattern.pattern_Status.forbidden):
-        ret.append(tag.upper())
-        ret.append(string.capwords(tag))
-    if(pat.special_characters != pattern.pattern_Status.forbidden):
-        for i in pat.specialCh_list:
-            ret.append(tag+i)
-            ret.append(tag.upper()+i)
-            ret.append(string.capwords(tag)+i)
-            ret.append(i+tag)
-            ret.append(i+tag.upper())
-            ret.append(i+string.capwords(tag))
-    return eliminateDoubles(ret)
-
-def sequencePossibilities_Of_Two(tag,other,pat):
-    """Sequences Posibilities of two Tags"""
-    ret = []
-    ret.append(tag+other)
-    ret.append(tag.lower()+other)
-    ret.append(tag+other.lower())
-    ret.append(tag.lower()+other.lower())
-    if(pat.capital):
-       ret.append(string.capwords(tag)+other)
-       ret.append(tag+string.capwords(other))
-       ret.append(string.capwords(tag)+string.capwords(other))
-       ret.append(tag.upper()+other.upper())
-       ret.append(tag.upper()+other)
-       ret.append(tag+other.upper())
-    return eliminateDoubles(ret)
-    
-    
-def generateSequenceOfTag(tag,pat):
-    """Generates Sequences of one Tag"""
-    seq = []
-    if(len(tag)<pat.max_length):
-        for iT in sequencePossibilities(tag,pat):
-            seq.append(iT)
-        diff=pat.max_length-len(tag)
-        if(diff>0 and pat.numbers != pattern.pattern_Status.forbidden):
-            if(diff>2):diff=2
-            rang = int(str(1)+diff*"0")
-            for i in range(rang):
-                for iT in sequencePossibilities(tag,pat):
-                    if(evaluator.hasNumber(iT)==0):
-                        seq.append(iT+str(i))
-                        seq.append(str(i)+iT)
-    return eliminateDoubles(seq)
-
-def generateSequenceOfTags(tags,length):
-    """Generates sequences of more tags
-       Combines tags together that fits the pattern.
-    """
-    seq = []
-    for i in tags:
-            com = [tag.Tag(x.name+i.name,i.priority) for x in tags if (len(i.name)+len(x.name))<=length]
-            for t in com:
-                seq.append(t)
-    return eliminateDoubles(seq)
-
 
 def getCountTime(time):
     """
@@ -167,24 +105,6 @@ def getCountTime(time):
     of a second 
     """
     if(time<1):return (1/10)/60
-
-def get_tags(tags,length):
-   """
-   Like a puzzle algorithm it combines tags together to one tag
-   """
-   seq = []
-   ret = []
-   hasMorePossibilities=True
-   for i in tags:ret.append(i)
-   while(hasMorePossibilities):
-      ret = generateSequenceOfTags(ret,length)
-      if(ret!=[]):
-          for i in ret:
-              seq.append(i)
-      else:
-          hasMorePossibilities=False
-          break
-   return seq
 
 def printProgress (iteration, total, prefix = '', suffix = '', decimals = 2, barLength = 10):
     """
@@ -197,6 +117,48 @@ def printProgress (iteration, total, prefix = '', suffix = '', decimals = 2, bar
     sys.stdout.write('\r%s |%s| %s%s %s' % (prefix, bar, percents, '%', suffix)),
     sys.stdout.flush()
 
+def extractAllTags(pers):
+    '''
+    '''
+    ret = []
+    for i in pers.tags:
+        ret.append(i.name)
+    return ret
+
+def sequence(tag_one_tag_two,lenght):
+    '''
+    '''
+    if(len(tag_one)+len(tag_two)<lenght):
+        return tag_one.join(tag_two)
+    return None
+
+def combi(ldata,lenght):
+    '''
+    '''
+    collect = set()
+    step = set([''])
+    while step:
+       step = set(a+b for a in step for b in ldata if len(a+b) <= lenght)
+       collect |= step
+    return sorted(collect)
+                
+
+def calculateCombinations(tags,pat):
+    data = tags
+    ret = []
+    if(pat.special_characters != pattern.pattern_Status.forbidden):
+        data.append(pat.speicalCh_list)
+    if(pat.capital != pattern.pattern_Status.forbidden):
+        for i in tags:
+            if(str(i).isdigit()==False):
+                data.append(i.upper())
+                data.append(i.title())
+    comb = combi(data,pat.max_length)
+    for i in comb:
+        if(evaluator.confirmedPattern(i,pat)):
+           ret.append(i)
+    return ret
+
 def gen(pers,pat):
     """
     Main method of listgen
@@ -208,20 +170,12 @@ def gen(pers,pat):
     start_time = time.time()
     file = open(pers.name+".txt","w+")
     pers.sort_tags() #The tags are now sorted by their priority
-    count=0
-    count2=0
-    seq = get_tags(pers.tags,pat.max_length)
-    for i in pers.tags:seq.append(i)
-    for i in seq:
-        printProgress(count2+1,len(seq),prefix = 'Progress:', suffix = 'Complete')
-        count2+=1
-        if(len(i.name)>pat.max_length or len(i.name)<pat.min_length):continue
-        #The real generation sequence
-        passWS = generateSequenceOfTag(i.name,pat)
-        for passW in passWS:
-            if(evaluator.confirmedPattern(passW,pat)):
-                file.write(passW+"\n")
-                count+=1
+    tags = extractAllTags(pers)
+    combinations=calculateCombinations(tags,pat)
+    for i in combinations:
+        file.write(i)
+        file.write("\n")
+    count = len(combinations)
     print("\nfinished with "+str(count)+" results")
     print("Saved to " + pers.name+".txt"," [ ",
           datetime.datetime.now().date()," ] "," [ ",

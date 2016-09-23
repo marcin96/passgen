@@ -93,7 +93,7 @@ def main(argv):
     else:
         print("WRONG ARGUMENT")
 
-if __name__ == "__main__":
+'''if __name__ == "__main__":
     #Entry Point
     """if main"""
     if(len(sys.argv)==1):
@@ -115,4 +115,5 @@ if __name__ == "__main__":
         logger.error("Wrong Value Input")
     else:
         logger.error("Not defined error")
-        
+'''
+main(sys.argv)
